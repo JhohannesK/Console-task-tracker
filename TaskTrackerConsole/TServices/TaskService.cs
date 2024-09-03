@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TaskTrackerConsole.Interfaces;
+using TaskTrackerConsole.Models;
+using TaskTrackerConsole.Utilities;
 
 namespace TaskTrackerConsole.TServices
 {
@@ -10,14 +13,68 @@ namespace TaskTrackerConsole.TServices
     {
         private readonly string FileName = "task_data.json";
         private readonly string FilePath = Path.Combine(Directory.GetCurrentDirectory(), "task_data.json");
-        public Task<int> AddNewTask(string desciption)
+        public Task<int> AddNewTask(string description)
         {
-            throw new NotImplementedException();
+           try
+           {
+             var appTasks = new List<TaskJSON>();
+             var task = new TaskJSON 
+             {
+                Id = GetTaskId(),
+                Description = description,
+                CreatedAt= DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                TaskStatus = Enums.Status.todo,
+             };
+
+             var isFileCreatedSuccessfuly = CreateFileIfNotExist();
+
+             if (isFileCreatedSuccessfuly)
+             {
+                string tasksFromJsonFileString = File.ReadAllText(FilePath);
+                if (!string.IsNullOrEmpty(tasksFromJsonFileString))
+                {
+                    appTasks = JsonSerializer.Deserialize<List<TaskJSON>>(tasksFromJsonFileString);
+                }
+                appTasks?.Add(task);
+                string newTaskJsonToString = JsonSerializer.Serialize(appTasks ?? []);
+                File.WriteAllText(FilePath, newTaskJsonToString);
+                Utility.PrintInfoMessage("Task added succesfully");
+             }
+             return Task.FromResult(0);
+           }
+           catch (Exception ex)
+           {
+            
+            Console.WriteLine($"Task failed to be added. Error - {ex.Message}");
+            return Task.FromResult(0);
+           }
         }
 
         public Task<bool> DeleteTask(int id)
         {
             throw new NotImplementedException();
+        }
+
+        private int GetTaskId()
+        {
+            if (!File.Exists(FileName))
+            {
+                return 1;
+            }
+            else 
+            {
+                string tasksFromJsonFileString = File.ReadAllText(FileName);
+                if (!string.IsNullOrEmpty(tasksFromJsonFileString))
+                {
+                    var appTasks = JsonSerializer.Deserialize<List<TaskJSON>>(tasksFromJsonFileString);
+                    if (appTasks != null && appTasks.Count > 0)
+                    {
+                        return appTasks.OrderBy(x => x.Id).Last().Id + 1;
+                    }
+                }
+            }
+            return 1;
         }
 
         public List<string> GetAllHelpCommands()
@@ -38,12 +95,12 @@ namespace TaskTrackerConsole.TServices
             };
         }
 
-        public Task<List<Task>> GetAllTasks()
+        public Task<List<TaskJSON>> GetAllTasks()
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Task>> GetTaskByStatus(string status)
+        public Task<List<TaskJSON>> GetTaskByStatus(string status)
         {
             throw new NotImplementedException();
         }

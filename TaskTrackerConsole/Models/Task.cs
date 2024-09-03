@@ -6,7 +6,7 @@ using TaskTrackerConsole.Enums;
 
 namespace TaskTrackerConsole.Models
 {
-    public class Task
+    public class TaskJSON
     {
         public int Id { get; set; }
 

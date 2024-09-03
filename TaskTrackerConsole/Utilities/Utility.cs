@@ -26,6 +26,12 @@ namespace TaskTrackerConsole.Utilities
             Console.ResetColor();
         }
 
+        public static void PrintErrorMessage(string message){
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n" + message);
+            Console.ResetColor();
+        }
+
         public static List<string> ParseInput(string input){
             var commandArgs = new List<string>();
 
@@ -39,6 +45,31 @@ namespace TaskTrackerConsole.Utilities
             }
 
             return commandArgs;
+        }
+
+        public static bool isUserInputValid(List<string> commands, int parameterRequired){
+            bool validInput = true;
+
+            if (parameterRequired == 1 && commands.Count != parameterRequired){
+                validInput = false;
+            }
+
+            if ((parameterRequired == 2 ) && (commands.Count != parameterRequired || string.IsNullOrEmpty(commands[1])))
+            {
+                validInput = false;
+            }
+
+            if ((parameterRequired == 3 ) && (commands.Count != parameterRequired || string.IsNullOrEmpty(commands[1]) && string.IsNullOrEmpty(commands[2])))
+            {
+                validInput = false;
+            }
+
+            if (!validInput){
+                PrintErrorMessage("Wrong Command! Try again please.");
+                PrintInfoMessage("Type \"help\" to know the right command and it's parameters");
+                return false;
+            }
+            return true;
         }
     }
 }

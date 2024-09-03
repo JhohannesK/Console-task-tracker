@@ -34,7 +34,7 @@ while(true){
             PrintHelpCommands();
             break;
         case "add":
-            // AddNewTask();
+            AddNewTask();
             break;
         case "exit":
            exit = true;
@@ -54,7 +54,16 @@ static void DisplayWelcomeMessage(){
     Utility.PrintInfoMessage("Welcome to Domeh Task Tracker Console App.");
 }
 
- void PrintHelpCommands(){
+void AddNewTask(){
+    if (!Utility.isUserInputValid(commands, 2))
+    {
+        return;
+    }
+
+    var taskAdded = _taskService?.AddNewTask(commands[1]);
+}
+
+void PrintHelpCommands(){
             Console.WriteLine("executed here");
             var helpCommands = _taskService?.GetAllHelpCommands();
             int count =1;
