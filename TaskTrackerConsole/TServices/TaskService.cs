@@ -39,7 +39,6 @@ namespace TaskTrackerConsole.TServices
                 appTasks?.Add(task);
                 string newTaskJsonToString = JsonSerializer.Serialize(appTasks ?? []);
                 File.WriteAllText(FilePath, newTaskJsonToString);
-                Utility.PrintInfoMessage("Task added succesfully");
              }
              return Task.FromResult(0);
            }
@@ -50,6 +49,7 @@ namespace TaskTrackerConsole.TServices
             return Task.FromResult(0);
            }
         }
+
 
         public Task<bool> DeleteTask(int id)
         {
@@ -97,7 +97,29 @@ namespace TaskTrackerConsole.TServices
 
         public Task<List<TaskJSON>> GetAllTasks()
         {
-            throw new NotImplementedException();
+           try
+           {
+             if (!File.Exists(FilePath))
+             {
+                return Task.FromResult(new List<TaskJSON>());
+             }
+
+             string fileContentString = File.ReadAllText(FilePath);
+             if(!string.IsNullOrEmpty(fileContentString))
+             {
+                List<TaskJSON> tasks = JsonSerializer.Deserialize<List<TaskJSON>>(fileContentString);
+                return Task.FromResult(tasks ?? []);
+             }
+             else
+             {
+                return Task.FromResult(new List<TaskJSON>());
+             }
+           }
+           catch (Exception ex)
+           {
+            Console.WriteLine($"Unable to load file. Error - {ex.Message}");
+            return Task.FromResult(new List<TaskJSON>());
+           }
         }
 
         public Task<List<TaskJSON>> GetTaskByStatus(string status)
@@ -133,6 +155,33 @@ namespace TaskTrackerConsole.TServices
                 return false;
             }
         }
+
+        public static void CreateTaskTable(List<TaskJSON> tasks)
+{
+    int colWidth1 = 15, colWidth2 = 35, colWidth3 = 15, colWidth4 = 15;
+    if (tasks != null && tasks.Count > 0)
+    {
+        Console.WriteLine("\n{0,-" + colWidth1 + "} {1,-" + colWidth2 + "} {2,-" + colWidth3 + "} {3,-" + colWidth4 + "}",
+            "Task Id", "Description", "Status", "Created Date" + "\n");
+
+        foreach (var task in tasks)
+        {
+            Utility.SetConsoleTextColor(task);
+            Console.WriteLine("{0,-" + colWidth1 + "} {1,-" + colWidth2 + "} {2,-" + colWidth3 + "} {3,-" + colWidth4 + "}"
+                , task.Id, task.Description, task.TaskStatus, task.CreatedAt.Date.ToString("dd-MM-yyyy"));
+            Console.ResetColor();
+        }
+    }
+    else
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\n No Task exists! \n");
+        Console.ResetColor();
+
+        Console.WriteLine("{0,-" + colWidth1 + "} {1,-" + colWidth2 + "} {2,-" + colWidth3 + "} {3,-" + colWidth4 + "}",
+           "Task Id", "Description", "Status", "CreatedDate");
+    }
+}
 
         #endregion
     }

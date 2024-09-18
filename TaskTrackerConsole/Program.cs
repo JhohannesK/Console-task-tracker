@@ -4,6 +4,7 @@ using TaskTrackerConsole.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using TaskTrackerConsole.Interfaces;
 using TaskTrackerConsole.TServices;
+using TaskTrackerConsole.Models;
 
 var serviceCollection = new ServiceCollection();
 ConfigureServices(serviceCollection);
@@ -36,6 +37,9 @@ while(true){
         case "add":
             AddNewTask();
             break;
+        case "list":
+            DisplayAllTask();
+            break;
         case "exit":
            exit = true;
             break;
@@ -61,6 +65,34 @@ void AddNewTask(){
     }
 
     var taskAdded = _taskService?.AddNewTask(commands[1]);
+
+    if (taskAdded != null && taskAdded.Result != 0)
+    {
+        Utility.PrintInfoMessage("Task added successfully");
+    }
+    else 
+    {
+        Utility.PrintInfoMessage("Task failed to be added");
+    }
+}
+
+void DisplayAllTask()
+{
+    if  (commands.Count > 2)
+    {
+        Utility.PrintErrorMessage("Wrong command! Try again.");
+        Utility.PrintErrorMessage("Type \"help\" to know the command it's parameter.");
+        return;
+    }
+
+    List<TaskJSON> tasks = new List<TaskJSON>();
+    if (commands.Count == 1)
+    {
+        tasks = _taskService?.GetAllTasks().Result.OrderBy(x => x.Id).ToList() ?? tasks;
+
+    }
+
+    TaskService.CreateTaskTable(tasks);
 }
 
 void PrintHelpCommands(){

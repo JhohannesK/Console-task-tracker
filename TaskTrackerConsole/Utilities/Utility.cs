@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TaskTrackerConsole.Models;
 
 namespace TaskTrackerConsole.Utilities
 {
@@ -70,6 +71,21 @@ namespace TaskTrackerConsole.Utilities
                 return false;
             }
             return true;
+        }
+
+        public static void SetConsoleTextColor(TaskJSON task) {
+            if(task.TaskStatus == Enums.Status.todo)
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+            }
+            else if (task.TaskStatus == Enums.Status.done)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            }
         }
     }
 }
