@@ -12,7 +12,7 @@ namespace TaskTrackerConsole.TServices
     public class TaskService : ITaskService
     {
         private readonly string FileName = "task_data.json";
-        private readonly string FilePath = Path.Combine(Directory.GetCurrentDirectory(), "task_data.json");
+        private readonly static string FilePath = Path.Combine(Directory.GetCurrentDirectory(), "task_data.json");
         public Task<int> AddNewTask(string description)
         {
            try
@@ -51,9 +51,46 @@ namespace TaskTrackerConsole.TServices
         }
 
 
+        private static Task<List<TaskJSON>> GetTaskList()
+        {
+            string tasksFromJsonFileString = File.ReadAllText(FilePath);
+            if (!string.IsNullOrEmpty(tasksFromJsonFileString))
+            {
+                return Task.FromResult(JsonSerializer.Deserialize<List<TaskJSON>>(tasksFromJsonFileString) ?? []);
+            }
+
+            return Task.FromResult(new List<TaskJSON>());
+        }
+
+
         public Task<bool> DeleteTask(int id)
         {
-            throw new NotImplementedException();
+            if (!File.Exists(FilePath))
+            {
+                return Task.FromResult(false);
+            }
+
+            var taskFromJson = GetTaskList();
+
+            if (taskFromJson.Result.Count > 0)
+            {
+                var taskToBeDeleted = taskFromJson.Result.Where(x => x.Id == id).SingleOrDefault();
+
+                if (taskToBeDeleted != null)
+                {
+                    taskFromJson.Result.Remove(taskToBeDeleted);
+                    UpdateJsonFile(taskFromJson);
+                    return Task.FromResult(true);
+                }
+            }
+
+            return Task.FromResult(false);
+        }
+
+        private static void UpdateJsonFile(Task<List<TaskJSON>> taskFromJson)
+        {
+            string updatedAppTasks = JsonSerializer.Serialize(taskFromJson.Result);
+            File.WriteAllText(FilePath, updatedAppTasks);
         }
 
         private int GetTaskId()

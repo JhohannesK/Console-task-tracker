@@ -40,6 +40,9 @@ while(true){
         case "list":
             DisplayAllTask();
             break;
+        case "delete":
+            DeleteTask();
+            break;
         case "exit":
            exit = true;
             break;
@@ -73,6 +76,29 @@ void AddNewTask(){
     else 
     {
         Utility.PrintInfoMessage("Task failed to be added");
+    }
+}
+
+void DeleteTask() {
+    if (!Utility.isUserInputValid(commands, 2)){
+        return;
+    }
+
+    int id = Utility.isValidProvided(commands, 0).Item2;
+
+    if (id == 0){
+        return;
+    }
+
+    var result = _taskService?.DeleteTask(id).Result;
+
+    if (result != null && result.Value)
+    {
+        Utility.PrintInfoMessage($"Task deleted successfully with Id: {id}");
+    }
+    else
+    {
+        Utility.PrintErrorMessage($"Task with Id : {id}, does not exist!");
     }
 }
 
