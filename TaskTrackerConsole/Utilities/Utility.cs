@@ -48,8 +48,8 @@ namespace TaskTrackerConsole.Utilities
             return commandArgs;
         }
 
-         public static Tuple<bool, int> isValidProvided(List<string> commands, int id){
-            Int32.TryParse(commands[1], out id);
+         public static Tuple<bool, int> IsValidProvided(List<string> commands, int id){
+            _ = int.TryParse(commands[1], out id);
 
             if (id == 0){
                 PrintErrorMessage("Wrong command! Try again.");
@@ -60,7 +60,7 @@ namespace TaskTrackerConsole.Utilities
             return new Tuple<bool, int>(true, id);
         }
 
-        public static bool isUserInputValid(List<string> commands, int parameterRequired){
+        public static bool IsUserInputValid(List<string> commands, int parameterRequired){
             bool validInput = true;
 
             if (parameterRequired == 1 && commands.Count != parameterRequired){

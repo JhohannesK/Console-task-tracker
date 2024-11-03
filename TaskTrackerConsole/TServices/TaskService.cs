@@ -169,23 +169,31 @@ namespace TaskTrackerConsole.TServices
                     return Task.FromResult(new List<TaskJSON>());
                 }
 
-                string fileContentString = File.ReadAllText(FilePath);
-                if (!string.IsNullOrEmpty(fileContentString))
-                {
-                    List<TaskJSON> tasks = JsonSerializer.Deserialize<List<TaskJSON>>(fileContentString);
-                    var statusToCheck = GetStatusToDisplay(status);
-                    return Task.FromResult(tasks.Where(task => task.TaskStatus == statusToCheck).ToList() ?? []);
-                }
-                else
-                {
-                    return Task.FromResult(new List<TaskJSON>());
-                }
+
+                var tasks = GetTasksFromJson();
+    
+                var statusToCheck = GetStatusToDisplay(status);
+                return Task.FromResult(tasks.Result.Where(task => task.TaskStatus == statusToCheck).ToList() ?? []);
             }
             catch (System.Exception)
             {
                 
                 throw;
             }
+        }
+
+        private Task<List<TaskJSON>> GetTasksFromJson()
+        {
+
+            string fileContentString = File.ReadAllText(FilePath);
+                if (!string.IsNullOrEmpty(fileContentString))
+                {
+                    return Task.FromResult(JsonSerializer.Deserialize<List<TaskJSON>>(fileContentString) ?? []); 
+                }
+                else
+                {
+                    return Task.FromResult(new List<TaskJSON>());
+                }
         }
 
         private Status GetStatusToDisplay(string status)
@@ -211,7 +219,41 @@ namespace TaskTrackerConsole.TServices
 
         public Task<bool> UpdateTask(int id, string description)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (!File.Exists(FilePath))
+                {
+                    return Task.FromResult(false);
+                }
+
+                var tasks = GetTasksFromJson();
+
+                if (tasks.Result.Count > 0) 
+                {
+                    var taskToBeUpdated = tasks.Result.Where(x => x.Id == id).SingleOrDefault();
+
+                    if (taskToBeUpdated != null) 
+                    {
+                        var updatedTask = new TaskJSON {
+                            Id = id,
+                            Description = description,
+                            CreatedAt = taskToBeUpdated.CreatedAt,
+                            TaskStatus = taskToBeUpdated.TaskStatus,
+                            UpdatedAt = DateTime.UtcNow,
+                        };
+                        tasks.Result.Remove(taskToBeUpdated);
+                        tasks.Result.Add(updatedTask);
+                        UpdateJsonFile(tasks);
+                    }
+
+                }
+                return Task.FromResult(false);
+            }
+            catch (System.Exception)
+            {
+                
+                throw;
+            }
         }
 
         #region Service Helper Methods

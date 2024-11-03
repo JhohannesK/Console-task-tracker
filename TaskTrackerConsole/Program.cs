@@ -44,6 +44,9 @@ while(true){
         case "delete":
             DeleteTask();
             break;
+        case "update":
+            UpdateTask();
+            break;
         case "exit":
            exit = true;
             break;
@@ -63,7 +66,7 @@ static void DisplayWelcomeMessage(){
 }
 
 void AddNewTask(){
-    if (!Utility.isUserInputValid(commands, 2))
+    if (!Utility.IsUserInputValid(commands, 2))
     {
         return;
     }
@@ -81,11 +84,11 @@ void AddNewTask(){
 }
 
 void DeleteTask() {
-    if (!Utility.isUserInputValid(commands, 2)){
+    if (!Utility.IsUserInputValid(commands, 2)){
         return;
     }
 
-    int id = Utility.isValidProvided(commands, 0).Item2;
+    int id = Utility.IsValidProvided(commands, 0).Item2;
 
     if (id == 0){
         return;
@@ -100,6 +103,32 @@ void DeleteTask() {
     else
     {
         Utility.PrintErrorMessage($"Task with Id : {id}, does not exist!");
+    }
+}
+
+void UpdateTask()
+{
+    if (!Utility.IsUserInputValid(commands, 3))
+    {
+        return;
+    }
+
+    int id = Utility.IsValidProvided(commands, 0).Item2;
+
+    if (id == 0)
+    {
+        return;
+    }
+
+    var result = _taskService?.UpdateTask(id, commands[2]).Result;
+
+    if (result != null && result.Value)
+    {
+        Utility.PrintInfoMessage($"Task updated successfully with id = {id}");
+    }
+    else 
+    {
+        Utility.PrintErrorMessage($"Task with id = {id} does not exist.");
     }
 }
 
