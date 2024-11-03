@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TaskTrackerConsole.Interfaces;
 using TaskTrackerConsole.TServices;
 using TaskTrackerConsole.Models;
+using TaskTrackerConsole.Enums;
 
 var serviceCollection = new ServiceCollection();
 ConfigureServices(serviceCollection);
@@ -116,6 +117,21 @@ void DisplayAllTask()
     {
         tasks = _taskService?.GetAllTasks().Result.OrderBy(x => x.Id).ToList() ?? tasks;
 
+    }
+
+    if (commands.Count == 2)
+    {
+     if (!commands[1].ToLower().Equals("todo") && !commands[1].ToLower().Equals("in-progress") && !commands[1].ToLower().Equals("done"))
+     {
+        Utility.PrintErrorMessage("Wrong command! Try again.");
+        Utility.PrintErrorMessage("Type \"help\" to know the command it's parameter.");
+        return;
+     }else 
+     {
+
+        tasks = _taskService.GetTaskByStatus(commands[1]).Result.OrderBy(x => x.Id).ToList() ?? tasks;
+     }
+        
     }
 
     TaskService.CreateTaskTable(tasks);

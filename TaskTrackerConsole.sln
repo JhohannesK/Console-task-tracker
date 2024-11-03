@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskTrackerConsole", "TaskTrackerConsole\TaskTrackerConsole.csproj", "{6E08EAA1-1EE7-4A70-AEA0-C6023046E73F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "..\ConsoleApp1\ConsoleApp1.csproj", "{EF79E900-2FA3-47B1-913A-41936F8BABBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{6E08EAA1-1EE7-4A70-AEA0-C6023046E73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E08EAA1-1EE7-4A70-AEA0-C6023046E73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E08EAA1-1EE7-4A70-AEA0-C6023046E73F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF79E900-2FA3-47B1-913A-41936F8BABBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF79E900-2FA3-47B1-913A-41936F8BABBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF79E900-2FA3-47B1-913A-41936F8BABBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF79E900-2FA3-47B1-913A-41936F8BABBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

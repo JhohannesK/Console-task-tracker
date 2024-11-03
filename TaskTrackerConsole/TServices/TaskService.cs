@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using TaskTrackerConsole.Enums;
 using TaskTrackerConsole.Interfaces;
 using TaskTrackerConsole.Models;
 using TaskTrackerConsole.Utilities;
@@ -161,7 +162,46 @@ namespace TaskTrackerConsole.TServices
 
         public Task<List<TaskJSON>> GetTaskByStatus(string status)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if(!File.Exists(FilePath))
+                {
+                    return Task.FromResult(new List<TaskJSON>());
+                }
+
+                string fileContentString = File.ReadAllText(FilePath);
+                if (!string.IsNullOrEmpty(fileContentString))
+                {
+                    List<TaskJSON> tasks = JsonSerializer.Deserialize<List<TaskJSON>>(fileContentString);
+                    var statusToCheck = GetStatusToDisplay(status);
+                    return Task.FromResult(tasks.Where(task => task.TaskStatus == statusToCheck).ToList() ?? []);
+                }
+                else
+                {
+                    return Task.FromResult(new List<TaskJSON>());
+                }
+            }
+            catch (System.Exception)
+            {
+                
+                throw;
+            }
+        }
+
+        private Status GetStatusToDisplay(string status)
+        {
+            switch (status)
+            {
+                case "todo":
+                    return Status.todo;
+                case "in-progress":
+                    return Status.in_progress;
+                case "done":
+                    return Status.done;
+
+                default:
+                    return Status.todo;
+            }
         }
 
         public Task<bool> SetStatus(string status, int id)
